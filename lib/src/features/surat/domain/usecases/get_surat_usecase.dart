@@ -11,7 +11,6 @@ class GetSuratUsecase implements Usecase<List<SuratEntity>, NoParams> {
   const GetSuratUsecase(this.repository);
   @override
   Future<Either<AppException, List<SuratEntity>>> call(NoParams param) async {
-    print("got hit");
     return await repository.getSurat();
   }
 }

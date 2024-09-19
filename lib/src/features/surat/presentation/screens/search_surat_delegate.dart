@@ -1,16 +1,39 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constant/theme/app_colors.dart';
+import '../../../../core/constant/theme/app_theme.dart';
+import '../../../../shared/data/datasource/theme/local_data_source.dart';
 import '../../../../shared/domain/entities/quran/ayat_entity.dart';
 
 class SearchSuratDelegate extends SearchDelegate<DataAyatEntity> {
   final List<DataAyatEntity> searchList;
+  final ThemeType themeType;
 
-  SearchSuratDelegate(this.searchList);
+  SearchSuratDelegate(this.searchList, this.themeType);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return AppTheme.darkTheme.copyWith(
+      appBarTheme: AppBarTheme(
+        color: AppTheme.mode(context).isDark
+            ? AppColors.darkBackgroundColor
+            : AppColors.lightBackgroundColor,
+      ),
+    );
+  }
+
+  @override
+  TextStyle? get searchFieldStyle => TextStyle(
+        color: themeType.isDark
+            ? AppColors.lightBackgroundColor
+            : AppColors.textPrimaryColor,
+      );
+
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
           // When pressed here the query will be cleared from the search bar.

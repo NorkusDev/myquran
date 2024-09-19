@@ -4,7 +4,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
+  static Brightness mode(BuildContext context) {
+    if (Theme.of(context).brightness.isDark) {
+      return Brightness.dark;
+    }
+    return Brightness.light;
+  }
+
   static final ThemeData lightTheme = ThemeData(
+    brightness: Brightness.light,
     primaryColor: AppColors.primaryColor,
     secondaryHeaderColor: AppColors.secondaryColor,
     canvasColor: AppColors.lightBackgroundColor,
@@ -17,6 +25,7 @@ class AppTheme {
   );
 
   static final ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
     primaryColor: AppColors.primaryColor,
     secondaryHeaderColor: AppColors.secondaryColor,
     canvasColor: AppColors.darkBackgroundColor,
@@ -59,4 +68,9 @@ class AppTextStyles {
     fontWeight: FontWeight.normal,
     color: Colors.black,
   );
+}
+
+extension BrightnessX on Brightness {
+  bool get isDark => this == Brightness.dark;
+  bool get isLight => this == Brightness.light;
 }
