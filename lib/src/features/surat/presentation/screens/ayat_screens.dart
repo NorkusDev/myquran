@@ -9,6 +9,7 @@ import '../../../../core/constant/app_strings.dart';
 import '../../../../core/constant/theme/app_colors.dart';
 import '../../../../core/constant/theme/app_theme.dart';
 import '../../../../injection.dart';
+import '../../../../shared/data/datasource/theme/local_data_source.dart';
 import '../bloc/surat/surat_bloc.dart';
 import '../widgets/loading_list_widget.dart';
 import 'search_surat_delegate.dart';
@@ -42,6 +43,12 @@ class _AyatScreensState extends State<AyatScreens> {
     super.initState();
     itemPositionsListener.itemPositions.addListener(_scrollListener);
     context.read<SuratBloc>().add(SuratGetDetailEvent(widget.suratNumber));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 
   void _scrollListener() {
@@ -95,7 +102,9 @@ class _AyatScreensState extends State<AyatScreens> {
                     ? state.ayat?.latin ?? ""
                     : widget.index.toString(),
                 style: AppTextStyles.boldLarge.copyWith(
-                  color: AppColors.primaryColor,
+                  color: AppTheme.mode(context).isDark
+                      ? AppColors.lightBackgroundColor
+                      : AppColors.primaryColor,
                 ),
               );
             }
@@ -112,7 +121,12 @@ class _AyatScreensState extends State<AyatScreens> {
                     onTap: () async {
                       final delegate = await showSearch(
                         context: context,
-                        delegate: SearchSuratDelegate(state.ayat?.ayat ?? []),
+                        delegate: SearchSuratDelegate(
+                          state.ayat?.ayat ?? [],
+                          AppTheme.mode(context).isDark
+                              ? ThemeType.dark
+                              : ThemeType.light,
+                        ),
                       );
                       _itemScrollController.scrollTo(
                         index: delegate!.nomor - 1,
@@ -189,7 +203,9 @@ class _AyatScreensState extends State<AyatScreens> {
                                   "${state.ayat?.ayat[index].ar}",
                                   textAlign: TextAlign.right,
                                   style: AppTextStyles.boldLarge.copyWith(
-                                    color: AppColors.textPrimaryColor,
+                                    color: AppTheme.mode(context).isDark
+                                        ? AppColors.lightBackgroundColor
+                                        : AppColors.textPrimaryColor,
                                   ),
                                 ),
                                 const SizedBox(
@@ -199,7 +215,9 @@ class _AyatScreensState extends State<AyatScreens> {
                                   "${state.ayat?.ayat[index].idn}",
                                   style: AppTextStyles.regularSmall.copyWith(
                                     fontSize: 16,
-                                    color: AppColors.textPrimaryColor,
+                                    color: AppTheme.mode(context).isDark
+                                        ? AppColors.textSecondaryColor
+                                        : AppColors.textPrimaryColor,
                                   ),
                                 ),
                                 const SizedBox(
@@ -228,7 +246,9 @@ class _AyatScreensState extends State<AyatScreens> {
   Container _toolbarContent(int index) {
     return Container(
       decoration: BoxDecoration(
-          color: const Color(0xFFF3F3F4),
+          color: AppTheme.mode(context).isDark
+              ? const Color(0xFF121931)
+              : const Color(0xFFF3F3F4),
           borderRadius: BorderRadius.circular(10)),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Row(
@@ -236,7 +256,9 @@ class _AyatScreensState extends State<AyatScreens> {
         children: [
           CircleAvatar(
             radius: 15,
-            backgroundColor: AppColors.primaryColor,
+            backgroundColor: AppTheme.mode(context).isDark
+                ? AppColors.secondaryColor
+                : AppColors.primaryColor,
             child: Text(
               "${(index + 1)}",
               style: AppTextStyles.medium.copyWith(
@@ -244,26 +266,32 @@ class _AyatScreensState extends State<AyatScreens> {
               ),
             ),
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Icon(
                 Icons.share_outlined,
-                color: AppColors.primaryColor,
+                color: AppTheme.mode(context).isDark
+                    ? AppColors.secondaryColor
+                    : AppColors.primaryColor,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Icon(
                 Icons.play_arrow_outlined,
-                color: AppColors.primaryColor,
+                color: AppTheme.mode(context).isDark
+                    ? AppColors.secondaryColor
+                    : AppColors.primaryColor,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Icon(
                 Icons.bookmark_outline,
-                color: AppColors.primaryColor,
+                color: AppTheme.mode(context).isDark
+                    ? AppColors.secondaryColor
+                    : AppColors.primaryColor,
               ),
             ],
           )

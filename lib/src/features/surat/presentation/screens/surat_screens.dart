@@ -9,6 +9,7 @@ import '../../../../core/constant/theme/app_colors.dart';
 import '../../../../core/constant/theme/app_theme.dart';
 import '../../../../core/routes/app_route.gr.dart';
 import '../../../../injection.dart';
+import '../../../../shared/features/bloc/theme/theme_bloc.dart';
 import '../bloc/surat/surat_bloc.dart';
 import '../widgets/loading_list_widget.dart';
 
@@ -20,8 +21,13 @@ class SuratScreens extends StatefulWidget implements AutoRouteWrapper {
   State<SuratScreens> createState() => _SuratScreensState();
   @override
   Widget wrappedRoute(BuildContext context) {
-    return BlocProvider<SuratBloc>(
-      create: (context) => sl<SuratBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SuratBloc>(
+          create: (context) => sl<SuratBloc>(),
+          child: this,
+        ),
+      ],
       child: this,
     );
   }
@@ -35,25 +41,41 @@ class _SuratScreensState extends State<SuratScreens> {
   }
 
   @override
-  void dispose() {
-    context.read<SuratBloc>().close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.mode(context).isDark
+          ? AppColors.darkBackgroundColor
+          : AppColors.lightBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.lightBackgroundColor,
+        backgroundColor: AppTheme.mode(context).isDark
+            ? AppColors.darkBackgroundColor
+            : AppColors.lightBackgroundColor,
         title: Text(
           "MyQuran App",
-          style: AppTextStyles.boldLarge
-              .copyWith(color: AppColors.primaryColor, fontSize: 20),
+          style: AppTextStyles.boldLarge.copyWith(
+              color: AppTheme.mode(context).isDark
+                  ? AppColors.lightBackgroundColor
+                  : AppColors.primaryColor,
+              fontSize: 20),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => BlocProvider.of<ThemeBloc>(context).add(
+              ThemeChangeEvent(),
+            ),
+            icon: Icon(
+              Icons.sunny,
+              size: 30,
+              color: AppTheme.mode(context).isDark
+                  ? AppColors.lightBackgroundColor
+                  : AppColors.darkBackgroundColor,
+            ),
+          )
+        ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => Future.delayed(Duration(milliseconds: 100), () {
-          context.read<SuratBloc>().add(SuratGetEvent());
+        onRefresh: () => Future.delayed(const Duration(milliseconds: 100), () {
+          context.read<SuratBloc>().add(const SuratGetEvent());
         }),
         child: SingleChildScrollView(
           child: Column(
@@ -67,16 +89,21 @@ class _SuratScreensState extends State<SuratScreens> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
                   "Assalamu'alaikum",
-                  style: AppTextStyles.medium
-                      .copyWith(color: AppColors.grayColor, fontSize: 18),
+                  style: AppTextStyles.medium.copyWith(
+                      color: AppTheme.mode(context).isDark
+                          ? AppColors.textSecondaryColor
+                          : AppColors.grayColor,
+                      fontSize: 18),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  "Bambang Prayitno",
+                  "Norkusm",
                   style: AppTextStyles.boldLarge.copyWith(
-                    color: AppColors.textPrimaryColor,
+                    color: AppTheme.mode(context).isDark
+                        ? AppColors.lightBackgroundColor
+                        : AppColors.textPrimaryColor,
                   ),
                 ),
               ),
@@ -92,7 +119,9 @@ class _SuratScreensState extends State<SuratScreens> {
                 child: Text(
                   "Surat",
                   style: AppTextStyles.boldLarge.copyWith(
-                    color: AppColors.primaryColor,
+                    color: AppTheme.mode(context).isDark
+                        ? AppColors.lightBackgroundColor
+                        : AppColors.primaryColor,
                   ),
                 ),
               ),
@@ -117,8 +146,12 @@ class _SuratScreensState extends State<SuratScreens> {
                     (key, value) => MapEntry(
                       key,
                       Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: Colors.grey.shade100,
+                        baseColor: AppTheme.mode(context).isDark
+                            ? AppColors.grayColor
+                            : Colors.grey.shade300,
+                        highlightColor: AppTheme.mode(context).isDark
+                            ? AppColors.grayColor.withOpacity(0.7)
+                            : Colors.grey.shade100,
                         period: const Duration(
                           milliseconds: 1000,
                         ),
@@ -140,15 +173,22 @@ class _SuratScreensState extends State<SuratScreens> {
                 },
                 trailing: Text(
                   "${state.surat?[i].nama}",
-                  style: AppTextStyles.boldLarge
-                      .copyWith(color: AppColors.primaryColor),
+                  style: AppTextStyles.boldLarge.copyWith(
+                      color: AppTheme.mode(context).isDark
+                          ? AppColors.lightBackgroundColor
+                          : AppColors.primaryColor),
                 ),
                 leading: Stack(
                   alignment: Alignment.center,
                   children: [
                     Text(
                       "${state.surat?[i].nomor}",
-                      style: AppTextStyles.medium.copyWith(fontSize: 14),
+                      style: AppTextStyles.medium.copyWith(
+                        fontSize: 14,
+                        color: AppTheme.mode(context).isDark
+                            ? AppColors.lightBackgroundColor
+                            : AppColors.textPrimaryColor,
+                      ),
                     ),
                     SvgPicture.asset(
                       "${AppConstant.imageAsset}/border_number.svg",
@@ -159,7 +199,9 @@ class _SuratScreensState extends State<SuratScreens> {
                   "${state.surat?[i].latin}",
                   style: AppTextStyles.boldLarge.copyWith(
                     fontSize: 16,
-                    color: AppColors.primaryColor,
+                    color: AppTheme.mode(context).isDark
+                        ? AppColors.lightBackgroundColor
+                        : AppColors.primaryColor,
                   ),
                 ),
                 subtitle: Row(
@@ -168,15 +210,20 @@ class _SuratScreensState extends State<SuratScreens> {
                   children: [
                     Text(
                       "${state.surat?[i].tempatTurun}",
-                      style: AppTextStyles.medium
-                          .copyWith(color: AppColors.grayColor, fontSize: 12),
+                      style: AppTextStyles.medium.copyWith(
+                          color: AppTheme.mode(context).isDark
+                              ? AppColors.textSecondaryColor
+                              : AppColors.grayColor,
+                          fontSize: 12),
                     ),
                     const SizedBox(
                       width: 5,
                     ),
                     CircleAvatar(
                       radius: 04,
-                      backgroundColor: AppColors.grayColor.withOpacity(0.5),
+                      backgroundColor: AppTheme.mode(context).isDark
+                          ? AppColors.textSecondaryColor
+                          : AppColors.grayColor.withOpacity(0.5),
                     ),
                     const SizedBox(
                       width: 5,
@@ -184,7 +231,9 @@ class _SuratScreensState extends State<SuratScreens> {
                     Text(
                       "${state.surat?[i].jumlahAyat} ayat",
                       style: AppTextStyles.medium.copyWith(
-                        color: AppColors.grayColor,
+                        color: AppTheme.mode(context).isDark
+                            ? AppColors.textSecondaryColor
+                            : AppColors.grayColor,
                         fontSize: 12,
                       ),
                     ),
@@ -194,8 +243,8 @@ class _SuratScreensState extends State<SuratScreens> {
               itemCount: state.surat?.length,
             );
           }
-          return const Center(
-            child: Text("Error"),
+          return Center(
+            child: Text(state.message),
           );
         },
       ),

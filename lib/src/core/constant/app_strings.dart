@@ -1,6 +1,7 @@
 class AppConstant {
   // static String get baseUrl => const String.fromEnvironment('API_HOST');
   static String get baseUrl => "https://quran-api.santrikoding.com/api";
+  static String get hostUrl => "quran-api.santrikoding.com";
   // static String get env => const String.fromEnvironment('APP_ENV');
   static String get env => "development";
 

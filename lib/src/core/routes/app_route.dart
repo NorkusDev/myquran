@@ -10,7 +10,6 @@ class AppRouteWithAuto extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: PrayerRoute.page),
         AutoRoute(page: NavigationBarWidget.page, initial: false),
         AutoRoute(page: AyatRoutes.page),
         AutoRoute(page: SuratRoutes.page, initial: true),
